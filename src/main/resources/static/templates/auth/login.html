@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - InsurancePro</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-wrapper">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="logo">
+                        <i class="fas fa-shield-alt"></i>
+                        <h1>InsurancePro</h1>
+                    </div>
+                    <p class="text-muted">Система управления страховой компанией</p>
+                </div>
+                
+                <div th:if="${param.error}" class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i> Неверный логин или пароль
+                </div>
+                <div th:if="${param.logout}" class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> Вы успешно вышли из системы
+                </div>
+                <div th:if="${param.expired}" class="alert alert-warning">
+                    <i class="fas fa-clock"></i> Сессия истекла. Пожалуйста, войдите снова.
+                </div>
+                
+                <form th:action="@{/login}" method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user"></i> Логин
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="username" 
+                               name="username" 
+                               required
+                               placeholder="Введите логин">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock"></i> Пароль
+                        </label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="password" 
+                               name="password" 
+                               required
+                               placeholder="Введите пароль">
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe" name="remember-me">
+                        <label class="form-check-label" for="rememberMe">Запомнить меня</label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sign-in-alt"></i> Войти
+                    </button>
+                </form>
+                
+                <div class="login-footer">
+                    <hr>
+                    <p class="text-center text-muted">
+                        <small>
+                            <i class="fas fa-info-circle"></i>
+                            Для доступа к системе обратитесь к администратору
+                        </small>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="login-info">
+                <h3>InsurancePro System</h3>
+                <p>Информационная система для автоматизации деятельности страховой компании</p>
+                
+                <div class="features">
+                    <div class="feature">
+                        <i class="fas fa-users"></i>
+                        <span>Управление клиентами</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Оформление договоров</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Статистика и отчетность</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Контроль страховых случаев</span>
+                    </div>
+                </div>
+                
+                <div class="system-info">
+                    <p><strong>Тестовые учетные записи:</strong></p>
+                    <div class="test-accounts">
+                        <div>
+                            <code>admin</code> / <code>admin123</code> - Администратор
+                        </div>
+                        <div>
+                            <code>manager1</code> / <code>manager123</code> - Менеджер
+                        </div>
+                        <div>
+                            <code>agent1</code> / <code>agent123</code> - Агент
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/auth.js"></script>
+</body>
+</html>

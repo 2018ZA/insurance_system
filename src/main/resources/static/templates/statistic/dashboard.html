@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head('Статистика')"></head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div th:replace="fragments/menu :: menu"></div>
+            </div>
+            
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-chart-bar"></i> Статистика
+                    </h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()">
+                                <i class="fas fa-print"></i> Печать
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="exportStats">
+                                <i class="fas fa-download"></i> Экспорт
+                            </button>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" 
+                                    data-bs-toggle="dropdown">
+                                <i class="fas fa-calendar-alt"></i> Период
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item period-btn" href="#" data-period="week">Неделя</a></li>
+                                <li><a class="dropdown-item period-btn" href="#" data-period="month">Месяц</a></li>
+                                <li><a class="dropdown-item period-btn" href="#" data-period="quarter">Квартал</a></li>
+                                <li><a class="dropdown-item period-btn" href="#" data-period="year">Год</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Фильтры -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-filter"></i> Фильтры
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="statFilterForm" class="row g-3">
+                            <div class="col-md-3">
+                                <label for="startDate" class="form-label">Дата начала</label>
+                                <input type="date" class="form-control" id="startDate" name="startDate">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="endDate" class="form-label">Дата окончания</label>
+                                <input type="date" class="form-control" id="endDate" name="endDate">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="insuranceTypeFilter" class="form-label">Тип страхования</label>
+                                <select class="form-select" id="insuranceTypeFilter" name="insuranceType">
+                                    <option value="">Все типы</option>
+                                    <option th:each="type : ${insuranceTypes}"
+                                            th:value="${type.code}"
+                                            th:text="${type.name}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="agentFilter" class="form-label">Агент</label>
+                                <select class="form-select" id="agentFilter" name="agentId">
+                                    <option value="">Все агенты</option>
+                                    <option th:each="agent : ${agents}"
+                                            th:value="${agent.id}"
+                                            th:text="${agent.fullName}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-filter"></i> Применить фильтры
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="resetFilters()">
+                                    <i class="fas fa-times"></i> Сбросить
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Основные показатели -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-value" data-stat="totalClients">0</div>
+                            <div class="stat-label">Всего клиентов</div>
+                            <div class="stat-change" data-change="clientGrowth">+0.0%</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-contract"></i>
+                            </div>
+                            <div class="stat-value" data-stat="totalContracts">0</div>
+                            <div class="stat-label">Всего договоров</div>
+                            <div class="stat-change" data-change="contractGrowth">+0.0%</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-value" data-stat="totalPremium">0 ₽</div>
+                            <div class="stat-label">Общая премия</div>
+                            <div class="stat-change" data-change="premiumGrowth">+0.0%</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-value" data-stat="claimsCount">0</div>
+                            <div class="stat-label">Страховые случаи</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Графики -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h5 class="chart-title">Динамика страховых премий</h5>
+                                <div class="chart-controls">
+                                    <div class="chart-period-selector">
+                                        <button class="period-btn active" data-period="month">Месяц</button>
+                                        <button class="period-btn" data-period="quarter">Квартал</button>
+                                        <button class="period-btn" data-period="year">Год</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="premiumByMonthChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="chart-card">
+                            <h5 class="chart-title">Договоры по типам страхования</h5>
+                            <div class="chart-container">
+                                <canvas id="contractsByTypeChart"></canvas>
+                            </div>
+                            <div class="chart-legend" id="typeChartLegend"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="chart-card">
+                            <h5 class="chart-title">Договоры по статусам</h5>
+                            <div class="chart-container">
+                                <canvas id="contractsByStatusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="chart-card">
+                            <h5 class="chart-title">Рост клиентской базы</h5>
+                            <div class="chart-container">
+                                <canvas id="clientGrowthChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Таблицы с данными -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-history"></i> Последние договоры
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table data-table" id="recentContractsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Номер</th>
+                                                <th>Клиент</th>
+                                                <th>Тип</th>
+                                                <th>Премия</th>
+                                                <th>Дата</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Данные загружаются через JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-trophy"></i> Топ агентов
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table data-table" id="topAgentsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Агент</th>
+                                                <th>Договоры</th>
+                                                <th>Премия</th>
+                                                <th>Средняя</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Данные загружаются через JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Дополнительная статистика -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-exclamation-circle"></i> Договоры, истекающие в ближайший месяц
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table data-table" id="expiringContractsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Номер договора</th>
+                                                <th>Клиент</th>
+                                                <th>Тип</th>
+                                                <th>Дата окончания</th>
+                                                <th>Дней осталось</th>
+                                                <th>Действия</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Данные загружаются через JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Статистика по страховым случаям -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-chart-pie"></i> Статистика по страховым случаям
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="chart-container">
+                                            <canvas id="claimsByTypeChart"></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="table-responsive">
+                                            <table class="table data-table" id="claimStatisticsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Тип страхования</th>
+                                                        <th>Договоров</th>
+                                                        <th>Случаев</th>
+                                                        <th>% случаев</th>
+                                                        <th>Общая сумма</th>
+                                                        <th>Средняя сумма</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Данные загружаются через JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="fragments/scripts :: scripts"></div>
+    
+    <!-- Подключение Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/statistic.js"></script>
+    
+    <style>
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card .stat-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        
+        .stat-card .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-card .stat-change {
+            font-size: 0.85rem;
+            margin-top: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .stat-card .stat-change.positive {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .stat-card .stat-change.negative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        .chart-period-selector {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .period-btn {
+            padding: 6px 12px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .period-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        .period-btn.active {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+        
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+    </style>
+    
+    <script>
+        // Инициализация статистики
+        document.addEventListener('DOMContentLoaded', function() {
+            StatisticManager.init();
+            
+            // Установка дат по умолчанию (последний месяц)
+            const endDateInput = document.getElementById('endDate');
+            const startDateInput = document.getElementById('startDate');
+            
+            const today = new Date();
+            const monthAgo = new Date();
+            monthAgo.setMonth(monthAgo.getMonth() - 1);
+            
+            if (!endDateInput.value) {
+                endDateInput.value = today.toISOString().split('T')[0];
+            }
+            
+            if (!startDateInput.value) {
+                startDateInput.value = monthAgo.toISOString().split('T')[0];
+            }
+        });
+        
+        function resetFilters() {
+            document.getElementById('statFilterForm').reset();
+            
+            // Установка дат по умолчанию
+            const today = new Date();
+            const monthAgo = new Date();
+            monthAgo.setMonth(monthAgo.getMonth() - 1);
+            
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+            document.getElementById('startDate').value = monthAgo.toISOString().split('T')[0];
+            
+            StatisticManager.loadStatistics();
+        }
+    </script>
+</body>
+</html>

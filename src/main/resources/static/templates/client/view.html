@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head('Просмотр клиента')"></head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    
+    <div class="container mt-4">
+        <!-- Хлебные крошки -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Главная</a></li>
+                <li class="breadcrumb-item"><a href="/clients">Клиенты</a></li>
+                <li class="breadcrumb-item active" aria-current="page">[[${client.fullName}]]</li>
+            </ol>
+        </nav>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Информация о клиенте -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-user-circle"></i> Информация о клиенте
+                        </h4>
+                        <div>
+                            <a th:href="@{/clients/{id}/edit(id=${client.id})}" 
+                               class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Редактировать
+                            </a>
+                            <a href="/clients" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Назад
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <strong><i class="fas fa-user"></i> ФИО:</strong>
+                                    <span>[[${client.fullName}]]</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong><i class="fas fa-id-card"></i> Паспортные данные:</strong>
+                                    <span th:if="${client.passportSeries}">
+                                        [[${client.passportSeries}]] [[${client.passportNumber}]]
+                                    </span>
+                                    <span th:unless="${client.passportSeries}" class="text-muted">
+                                        Не указаны
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <strong><i class="fas fa-phone"></i> Телефон:</strong>
+                                    <span>[[${client.phone}]]</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong><i class="fas fa-envelope"></i> Email:</strong>
+                                    <span th:if="${client.email}">[[${client.email}]]</span>
+                                    <span th:unless="${client.email}" class="text-muted">Не указан</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <strong><i class="fas fa-calendar-alt"></i> Дата регистрации:</strong>
+                            <span th:text="${#dates.format(client.registrationDate, 'dd.MM.yyyy HH:mm')}"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Договоры клиента -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-file-contract"></i> Договоры клиента
+                            <span class="badge bg-primary ms-2" th:text="${client.contracts.size()}"></span>
+                        </h4>
+                        <a th:href="@{/contracts/new(clientId=${client.id})}" 
+                           class="btn btn-sm btn-success">
+                            <i class="fas fa-plus"></i> Добавить договор
+                        </a>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(client.contracts)}" class="text-center py-4">
+                            <i class="fas fa-file-contract fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">У клиента нет договоров</p>
+                            <a th:href="@{/contracts/new(clientId=${client.id})}" 
+                               class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Оформить первый договор
+                            </a>
+                        </div>
+                        
+                        <div th:unless="${#lists.isEmpty(client.contracts)}" class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Номер договора</th>
+                                        <th>Тип страхования</th>
+                                        <th>Статус</th>
+                                        <th>Страховая сумма</th>
+                                        <th>Период действия</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="contract : ${client.contracts}">
+                                        <td>
+                                            <a th:href="@{/contracts/{id}(id=${contract.id})}" 
+                                               class="text-decoration-none">
+                                                [[${contract.contractNumber}]]
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">
+                                                [[${contract.insuranceType.name}]]
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span th:class="'badge bg-' + ${contract.status.code == 'ACTIVE' ? 'success' : 
+                                                (contract.status.code == 'EXPIRED' ? 'warning' : 'secondary')}">
+                                                [[${contract.status.name}]]
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span th:text="${#numbers.formatDecimal(contract.insuredAmount, 0, 'POINT', 2, 'COMMA')} + ' ₽'"></span>
+                                        </td>
+                                        <td>
+                                            <small>
+                                                <span th:text="${#dates.format(contract.startDate, 'dd.MM.yyyy')}"></span>
+                                                -
+                                                <span th:text="${#dates.format(contract.endDate, 'dd.MM.yyyy')}"></span>
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/contracts/{id}(id=${contract.id})}" 
+                                               class="btn btn-sm btn-info" title="Просмотр">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a th:href="@{/contracts/{id}/edit(id=${contract.id})}" 
+                                               class="btn btn-sm btn-warning" title="Редактировать">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Боковая панель -->
+            <div class="col-md-4">
+                <!-- Быстрые действия -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bolt"></i> Быстрые действия
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/contracts/new(clientId=${client.id})}" 
+                               class="btn btn-primary">
+                                <i class="fas fa-file-contract"></i> Новый договор
+                            </a>
+                            <a th:href="@{/payments/new(clientId=${client.id})}" 
+                               class="btn btn-success">
+                                <i class="fas fa-money-bill-wave"></i> Регистрация платежа
+                            </a>
+                            <a th:href="@{/claims/new(clientId=${client.id})}" 
+                               class="btn btn-warning">
+                                <i class="fas fa-exclamation-triangle"></i> Страховой случай
+                            </a>
+                            <a th:href="'tel:' + ${client.phone}" 
+                               class="btn btn-outline-primary">
+                                <i class="fas fa-phone"></i> Позвонить
+                            </a>
+                            <a th:href="'mailto:' + ${client.email ?: '#'}" 
+                               class="btn btn-outline-success" 
+                               th:classappend="${client.email ? '' : 'disabled'}">
+                                <i class="fas fa-envelope"></i> Написать email
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Статистика по клиенту -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-pie"></i> Статистика
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <div class="stat-label">Всего договоров:</div>
+                                <div class="stat-value" th:text="${client.contracts.size()}"></div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Активных:</div>
+                                <div class="stat-value text-success">
+                                    [[${#lists.stream(client.contracts)
+                                        .filter(c -> c.status.code == 'ACTIVE')
+                                        .count()}]]
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Истекших:</div>
+                                <div class="stat-value text-warning">
+                                    [[${#lists.stream(client.contracts)
+                                        .filter(c -> c.status.code == 'EXPIRED')
+                                        .count()}]]
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Общая страховая сумма:</div>
+                                <div class="stat-value">
+                                    [[${#numbers.formatDecimal(
+                                        #lists.stream(client.contracts)
+                                            .map(c -> c.insuredAmount)
+                                            .reduce(0, (a, b) -> a + b),
+                                        0, 'POINT', 2, 'COMMA')
+                                    }]] ₽
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <!-- Распределение по типам -->
+                        <h6>По типам страхования:</h6>
+                        <div id="clientTypeChart"></div>
+                    </div>
+                </div>
+                
+                <!-- История активности -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-history"></i> Недавняя активность
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-timeline">
+                            <div class="activity-item">
+                                <div class="activity-icon bg-success">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Клиент зарегистрирован</div>
+                                    <div class="activity-time">
+                                        [[${#dates.format(client.registrationDate, 'dd.MM.yyyy HH:mm')}]]
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item" th:each="contract : ${client.contracts}">
+                                <div class="activity-icon bg-info">
+                                    <i class="fas fa-file-signature"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">
+                                        Оформлен договор [[${contract.contractNumber}]]
+                                    </div>
+                                    <div class="activity-time">
+                                        [[${#dates.format(contract.createdAt, 'dd.MM.yyyy HH:mm')}]]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="fragments/scripts :: scripts"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Построение круговой диаграммы
+            const contracts = [[$,{client.contracts}]];
+            const typeCounts = {};
+            
+            contracts.forEach(contract => {
+                const type = contract.insuranceType.name;
+                typeCounts[type] = (typeCounts[type] || 0) + 1;
+            });
+            
+            const labels = Object.keys(typeCounts);
+            const data = Object.values(typeCounts);
+            const colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c'];
+            
+            if (labels.length > 0) {
+                const ctx = document.createElement('canvas');
+                document.getElementById('clientTypeChart').appendChild(ctx);
+                
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors.slice(0, labels.length)
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            } else {
+                document.getElementById('clientTypeChart').innerHTML = 
+                    '<p class="text-muted text-center">Нет данных для отображения</p>';
+            }
+        });
+    </script>
+    
+    <style>
+        .info-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-item strong {
+            display: block;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .info-item span {
+            font-size: 1.1em;
+        }
+        
+        .stats-list {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #dee2e6;
+        }
+        
+        .activity-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .activity-icon {
+            position: absolute;
+            left: -30px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .activity-content {
+            margin-left: 20px;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+        }
+        
+        .activity-time {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<div th:fragment="menu">
+    <div class="sidebar">
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="user-details">
+                <div class="user-name" th:text="${#authentication.name}"></div>
+                <div class="user-role" th:text="${#authorization.expression('hasRole(''ADMIN'')') ? 'Администратор' : 
+                    (#authorization.expression('hasRole(''MANAGER'')') ? 'Менеджер' : 'Агент')}"></div>
+            </div>
+        </div>
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home"></i> Главная
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/clients">
+                    <i class="fas fa-users"></i> Клиенты
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/contracts">
+                    <i class="fas fa-file-contract"></i> Договоры
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/payments">
+                    <i class="fas fa-credit-card"></i> Платежи
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/claims">
+                    <i class="fas fa-exclamation-triangle"></i> Страховые случаи
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/statistics">
+                    <i class="fas fa-chart-bar"></i> Статистика
+                </a>
+            </li>
+            
+            <li class="nav-divider">Администрирование</li>
+            
+            <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="nav-item">
+                <a class="nav-link" href="/admin/users">
+                    <i class="fas fa-user-cog"></i> Пользователи
+                </a>
+            </li>
+            <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="nav-item">
+                <a class="nav-link" href="/admin/settings">
+                    <i class="fas fa-cog"></i> Настройки
+                </a>
+            </li>
+            
+            <li class="nav-divider">Справка</li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="/about">
+                    <i class="fas fa-info-circle"></i> Об авторе
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/help">
+                    <i class="fas fa-question-circle"></i> Помощь
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="system-info">
+                <small>
+                    <i class="fas fa-database"></i> 
+                    <span th:text="${clientCount} + ' клиентов'"></span>
+                </small>
+                <br>
+                <small>
+                    <i class="fas fa-file-alt"></i> 
+                    <span th:text="${contractCount} + ' договоров'"></span>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>

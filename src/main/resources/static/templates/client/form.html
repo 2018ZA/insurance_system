@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head(${clientDTO?.id ? 'Редактирование клиента' : 'Новый клиент'})"></head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">
+                            <i class="fas" th:class="${clientDTO?.id ? 'fa-edit' : 'fa-user-plus'}"></i>
+                            <span th:text="${clientDTO?.id ? 'Редактирование клиента' : 'Новый клиент'}"></span>
+                        </h4>
+                    </div>
+                    
+                    <div class="card-body">
+                        <form th:action="${clientDTO?.id ? '/clients/' + clientDTO.id : '/clients'}" 
+                              method="post" 
+                              id="clientForm"
+                              th:object="${clientDTO}">
+                            
+                            <!-- Уведомления -->
+                            <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+                                <i class="fas fa-check-circle"></i> [[${success}]]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                                <i class="fas fa-exclamation-circle"></i> [[${error}]]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            
+                            <!-- ФИО -->
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label required">
+                                    <i class="fas fa-user"></i> ФИО
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="fullName"
+                                       th:field="*{fullName}"
+                                       required
+                                       placeholder="Введите полное имя">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}">
+                                    [[${#fields.errors('fullName')}]]
+                                </div>
+                            </div>
+                            
+                            <!-- Паспортные данные -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="passportSeries" class="form-label">
+                                        <i class="fas fa-id-card"></i> Серия паспорта
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="passportSeries"
+                                           th:field="*{passportSeries}"
+                                           pattern="\d{4}"
+                                           placeholder="1234"
+                                           maxlength="4">
+                                    <div class="form-text">4 цифры</div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('passportSeries')}">
+                                        [[${#fields.errors('passportSeries')}]]
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="passportNumber" class="form-label">
+                                        <i class="fas fa-id-card"></i> Номер паспорта
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="passportNumber"
+                                           th:field="*{passportNumber}"
+                                           pattern="\d{6}"
+                                           placeholder="123456"
+                                           maxlength="6">
+                                    <div class="form-text">6 цифр</div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('passportNumber')}">
+                                        [[${#fields.errors('passportNumber')}]]
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Контакты -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label required">
+                                        <i class="fas fa-phone"></i> Телефон
+                                    </label>
+                                    <input type="tel" 
+                                           class="form-control" 
+                                           id="phone"
+                                           th:field="*{phone}"
+                                           required
+                                           pattern="^\+7\d{10}$"
+                                           placeholder="+79991234567">
+                                    <div class="form-text">Формат: +79991234567</div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}">
+                                        [[${#fields.errors('phone')}]]
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">
+                                        <i class="fas fa-envelope"></i> Email
+                                    </label>
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="email"
+                                           th:field="*{email}"
+                                           placeholder="client@example.com">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}">
+                                        [[${#fields.errors('email')}]]
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Кнопки -->
+                            <div class="d-flex justify-content-between">
+                                <a href="/clients" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left"></i> Назад к списку
+                                </a>
+                                <div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> 
+                                        <span th:text="${clientDTO?.id ? 'Обновить' : 'Создать'}"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" 
+                                            th:if="${clientDTO?.id}"
+                                            th:onclick="'confirmDelete(\'Вы уверены, что хотите удалить этого клиента?\', \'/clients/' + ${clientDTO.id} + '/delete\')'">
+                                        <i class="fas fa-trash"></i> Удалить
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Договоры клиента -->
+                <div th:if="${clientDTO?.id}" class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-file-contract"></i> Договоры клиента
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Номер договора</th>
+                                        <th>Тип страхования</th>
+                                        <th>Статус</th>
+                                        <th>Дата начала</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clientContracts">
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <i class="fas fa-spinner fa-spin"></i> Загрузка договоров...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            <a th:href="@{/contracts/new(clientId=${clientDTO.id})}" class="btn btn-sm btn-success">
+                                <i class="fas fa-plus"></i> Добавить договор
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="fragments/scripts :: scripts"></div>
+    
+    <script>
+        // Валидация формы на стороне клиента
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('clientForm');
+            const phoneInput = document.getElementById('phone');
+            const passportSeriesInput = document.getElementById('passportSeries');
+            const passportNumberInput = document.getElementById('passportNumber');
+            
+            // Маска для телефона
+            phoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.startsWith('7') || value.startsWith('8')) {
+                    value = '+7' + value.substring(1);
+                } else if (value.length > 0) {
+                    value = '+7' + value;
+                }
+                e.target.value = value.substring(0, 12);
+            });
+            
+            // Проверка паспортных данных
+            passportSeriesInput.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+            });
+            
+            passportNumberInput.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/\D/g, '').substring(0, 6);
+            });
+            
+            // Загрузка договоров клиента
+            const clientId = [[${clientDTO?.id}]];
+            if (clientId) {
+                fetch('/api/clients/' + clientId + '/contracts')
+                    .then(response => response.json())
+                    .then(data => {
+                        const tbody = document.getElementById('clientContracts');
+                        tbody.innerHTML = '';
+                        
+                        if (data.length === 0) {
+                            tbody.innerHTML = `
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        <i class="fas fa-info-circle"></i> У клиента нет договоров
+                                    </td>
+                                </tr>
+                            `;
+                            return;
+                        }
+                        
+                        data.forEach(contract => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td><a href="/contracts/${contract.id}">${contract.contractNumber}</a></td>
+                                <td>${contract.insuranceType}</td>
+                                <td><span class="badge bg-${contract.statusColor}">${contract.status}</span></td>
+                                <td>${new Date(contract.startDate).toLocaleDateString('ru-RU')}</td>
+                                <td>
+                                    <a href="/contracts/${contract.id}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading contracts:', error);
+                        const tbody = document.getElementById('clientContracts');
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center text-danger">
+                                    <i class="fas fa-exclamation-triangle"></i> Ошибка загрузки данных
+                                </td>
+                            </tr>
+                        `;
+                    });
+            }
+            
+            // Форма валидации
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="fragments/header :: head('Главная')"></head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div th:replace="fragments/menu :: menu"></div>
+            </div>
+            
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-home"></i> Главная панель
+                    </h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()">
+                                <i class="fas fa-print"></i> Печать
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-download"></i> Экспорт
+                            </button>
+                        </div>
+                        <div class="btn-group">
+                            <span class="badge bg-primary">
+                                <i class="fas fa-user"></i>
+                                <span sec:authentication="name"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Клиенты</h6>
+                                        <h2 class="mb-0" th:text="${clientCount}">0</h2>
+                                    </div>
+                                    <i class="fas fa-users fa-3x opacity-50"></i>
+                                </div>
+                                <a href="/clients" class="text-white text-decoration-none">
+                                    <small>Посмотреть всех <i class="fas fa-arrow-right"></i></small>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Активные договоры</h6>
+                                        <h2 class="mb-0" th:text="${contractCount}">0</h2>
+                                    </div>
+                                    <i class="fas fa-file-contract fa-3x opacity-50"></i>
+                                </div>
+                                <a href="/contracts" class="text-white text-decoration-none">
+                                    <small>Посмотреть все <i class="fas fa-arrow-right"></i></small>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card text-white bg-warning">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Ожидают оплаты</h6>
+                                        <h2 class="mb-0">12</h2>
+                                    </div>
+                                    <i class="fas fa-clock fa-3x opacity-50"></i>
+                                </div>
+                                <a href="/payments" class="text-white text-decoration-none">
+                                    <small>Посмотреть <i class="fas fa-arrow-right"></i></small>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">На рассмотрении</h6>
+                                        <h2 class="mb-0">5</h2>
+                                    </div>
+                                    <i class="fas fa-exclamation-triangle fa-3x opacity-50"></i>
+                                </div>
+                                <a href="/claims" class="text-white text-decoration-none">
+                                    <small>Посмотреть <i class="fas fa-arrow-right"></i></small>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Быстрые действия</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <a href="/clients/new" class="btn btn-outline-primary w-100 mb-2">
+                                            <i class="fas fa-user-plus"></i> Добавить клиента
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="/contracts/new" class="btn btn-outline-success w-100 mb-2">
+                                            <i class="fas fa-file-signature"></i> Оформить договор
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="/payments/new" class="btn btn-outline-warning w-100 mb-2">
+                                            <i class="fas fa-money-bill-wave"></i> Зарегистрировать платеж
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="/claims/new" class="btn btn-outline-danger w-100 mb-2">
+                                            <i class="fas fa-exclamation-circle"></i> Заявить страховой случай
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Последние договоры</h5>
+                                <a href="/contracts" class="btn btn-sm btn-outline-primary">
+                                    Все договоры <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Номер договора</th>
+                                                <th>Клиент</th>
+                                                <th>Тип страхования</th>
+                                                <th>Статус</th>
+                                                <th>Дата начала</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="5" class="text-center">
+                                                    <i class="fas fa-spinner fa-spin"></i> Загрузка данных...
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Статистика по типам</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="typeChart" width="400" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Calendar -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Календарь событий</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="fragments/scripts :: scripts"></div>
+    
+    <script>
+        // Инициализация графика
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('typeChart').getContext('2d');
+            const typeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['ОСАГО', 'КАСКО', 'Страхование жизни', 'Недвижимость'],
+                    datasets: [{
+                        data: [12, 19, 8, 15],
+                        backgroundColor: [
+                            '#3498db',
+                            '#2ecc71',
+                            '#e74c3c',
+                            '#f39c12'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+            
+            // Загрузка последних договоров
+            fetch('/api/contracts/recent')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('table tbody');
+                    tbody.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <i class="fas fa-info-circle"></i> Нет данных
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    data.forEach(contract => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><a href="/contracts/${contract.id}">${contract.contractNumber}</a></td>
+                            <td>${contract.clientName}</td>
+                            <td>${contract.insuranceType}</td>
+                            <td><span class="badge bg-${contract.status === 'ACTIVE' ? 'success' : 'warning'}">${contract.status}</span></td>
+                            <td>${new Date(contract.startDate).toLocaleDateString('ru-RU')}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading recent contracts:', error);
+                });
+        });
+    </script>
+</body>
+</html>

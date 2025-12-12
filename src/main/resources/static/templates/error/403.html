@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доступ запрещен - InsurancePro</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="error-page">
+        <div class="error-container">
+            <div class="error-content">
+                <div class="error-code">403</div>
+                <h1 class="error-title">
+                    <i class="fas fa-ban"></i> Доступ запрещен
+                </h1>
+                <p class="error-message">
+                    У вас нет разрешения для доступа к этой странице.
+                </p>
+                
+                <div class="error-details">
+                    <p>
+                        <strong>Возможные причины:</strong>
+                    </p>
+                    <ul>
+                        <li>Вы не авторизованы в системе</li>
+                        <li>У вашей учетной записи нет необходимых прав</li>
+                        <li>Страница доступна только определенным ролям пользователей</li>
+                        <li>Доступ к ресурсу ограничен администратором</li>
+                    </ul>
+                    
+                    <div class="user-info mt-3 p-3 bg-light rounded">
+                        <p class="mb-1">
+                            <strong>Текущий пользователь:</strong>
+                            <span th:text="${#authentication?.name ?: 'Не авторизован'}"></span>
+                        </p>
+                        <p class="mb-0">
+                            <strong>Роль:</strong>
+                            <span th:if="${#authentication?.authorities}" 
+                                  th:text="${#authentication.authorities[0].authority}">
+                            </span>
+                            <span th:unless="${#authentication?.authorities}">Не определена</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="error-actions">
+                    <a th:href="${#authentication?.name ? '/' : '/login'}" class="btn btn-primary">
+                        <i th:class="${#authentication?.name ? 'fas fa-home' : 'fas fa-sign-in-alt'}"></i>
+                        <span th:text="${#authentication?.name ? 'На главную' : 'Войти в систему'}"></span>
+                    </a>
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад
+                    </a>
+                    <a th:href="'mailto:' + ${adminEmail ?: 'admin@insurancepro.ru'}" 
+                       class="btn btn-outline-info">
+                        <i class="fas fa-envelope"></i> Запросить доступ
+                    </a>
+                </div>
+                
+                <div class="error-permissions mt-4">
+                    <h6><i class="fas fa-shield-alt"></i> Требуемые разрешения</h6>
+                    <div class="permissions-list">
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-danger">ADMIN</span>
+                            <span class="badge bg-warning">MANAGER</span>
+                            <span class="badge bg-info">AGENT</span>
+                        </div>
+                        <p class="small text-muted mt-2">
+                            Для доступа к этой странице необходима одна из указанных ролей.
+                            Обратитесь к администратору для получения необходимых прав.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="error-contact mt-4">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <strong>Для получения доступа:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Обратитесь к администратору системы</li>
+                            <li>Укажите причину, по которой вам необходим доступ</li>
+                            <li>Дождитесь подтверждения от администратора</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="error-technical mt-4">
+                    <details>
+                        <summary class="text-muted small">
+                            <i class="fas fa-lock"></i> Техническая информация
+                        </summary>
+                        <div class="mt-2 p-3 bg-light rounded">
+                            <p class="mb-1">
+                                <strong>URL:</strong> <span id="current-url"></span>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Метод:</strong> <span id="request-method"></span>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Время:</strong> <span th:text="${#dates.createNow()}"></span>
+                            </p>
+                            <p class="mb-0">
+                                <strong>Статус:</strong> 403 Forbidden
+                            </p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+            
+            <div class="error-illustration">
+                <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="250" cy="250" r="200" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+                    <rect x="150" y="150" width="200" height="200" rx="20" fill="#fff" stroke="#6c757d" stroke-width="2"/>
+                    <path d="M180,200 L320,200" stroke="#dc3545" stroke-width="10" stroke-linecap="round"/>
+                    <path d="M180,300 L320,300" stroke="#dc3545" stroke-width="10" stroke-linecap="round"/>
+                    <circle cx="250" cy="250" r="50" fill="#fff" stroke="#6c757d" stroke-width="2"/>
+                    <circle cx="250" cy="250" r="30" fill="#dc3545">
+                        <animate attributeName="r" values="30;35;30" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <path d="M245,235 L255,245 M245,245 L255,235" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="120" y="120" width="260" height="260" rx="30" fill="none" stroke="#ffc107" stroke-width="3" stroke-dasharray="10,5"/>
+                    <text x="250" y="450" text-anchor="middle" fill="#6c757d" font-size="20">
+                        403 - Доступ запрещен
+                    </text>
+                    <g opacity="0.5">
+                        <circle cx="100" cy="100" r="15" fill="#6c757d"/>
+                        <circle cx="400" cy="100" r="15" fill="#6c757d"/>
+                        <circle cx="100" cy="400" r="15" fill="#6c757d"/>
+                        <circle cx="400" cy="400" r="15" fill="#6c757d"/>
+                        <path d="M100,100 L150,150" stroke="#6c757d" stroke-width="2" stroke-dasharray="5,5"/>
+                        <path d="M400,100 L350,150" stroke="#6c757d" stroke-width="2" stroke-dasharray="5,5"/>
+                        <path d="M100,400 L150,350" stroke="#6c757d" stroke-width="2" stroke-dasharray="5,5"/>
+                        <path d="M400,400 L350,350" stroke="#6c757d" stroke-width="2" stroke-dasharray="5,5"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Показываем текущий URL
+            document.getElementById('current-url').textContent = window.location.href;
+            
+            // Определяем метод запроса
+            document.getElementById('request-method').textContent = 'GET';
+            
+            // Логирование ошибки доступа
+            console.warn('403 Error: Access forbidden to', window.location.href);
+            
+            // Отправка уведомления администратору (в реальном проекте)
+            function notifyAdmin() {
+                const accessData = {
+                    url: window.location.href,
+                    user: document.querySelector('.user-info span').textContent,
+                    timestamp: new Date().toISOString(),
+                    ip: 'unknown' // В реальном проекте получайте IP с сервера
+                };
+                
+                console.log('Access violation:', accessData);
+            }
+            
+            notifyAdmin();
+            
+            // Предупреждение о попытке доступа
+            setTimeout(function() {
+                alert('Доступ к запрашиваемой странице ограничен. Обратитесь к администратору для получения разрешений.');
+            }, 1000);
+        });
+    </script>
+    
+    <style>
+        .error-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 20px;
+        }
+        
+        .error-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            max-width: 1000px;
+            width: 100%;
+        }
+        
+        @media (min-width: 992px) {
+            .error-container {
+                display: flex;
+            }
+        }
+        
+        .error-content {
+            padding: 40px;
+            flex: 1;
+        }
+        
+        .error-illustration {
+            padding: 40px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 991px) {
+            .error-illustration {
+                display: none;
+            }
+        }
+        
+        .error-code {
+            font-size: 6rem;
+            font-weight: 800;
+            color: #dc3545;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+        
+        .error-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .error-message {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+        
+        .error-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .error-details ul {
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+        
+        .error-details li {
+            margin-bottom: 5px;
+        }
+        
+        .user-info {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .error-permissions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .error-permissions h6 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ffc107;
+            padding-bottom: 5px;
+        }
+        
+        .permissions-list .badge {
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+        
+        .error-contact .alert {
+            border-left: 4px solid #ffc107;
+        }
+        
+        .error-technical summary {
+            cursor: pointer;
+            padding: 5px 0;
+        }
+        
+        .error-technical details[open] summary {
+            margin-bottom: 10px;
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head(${contractDTO?.id ? 'Редактирование договора' : 'Новый договор'})"></head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div th:replace="fragments/menu :: menu"></div>
+            </div>
+            
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Хлебные крошки -->
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Главная</a></li>
+                        <li class="breadcrumb-item"><a href="/contracts">Договоры</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <span th:text="${contractDTO?.id ? 'Редактирование' : 'Новый договор'}"></span>
+                        </li>
+                    </ol>
+                </nav>
+                
+                <!-- Форма договора -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="mb-0">
+                                    <i class="fas" th:class="${contractDTO?.id ? 'fa-edit' : 'fa-file-contract'}"></i>
+                                    <span th:text="${contractDTO?.id ? 'Редактирование договора' : 'Оформление нового договора'}"></span>
+                                </h4>
+                            </div>
+                            
+                            <div class="card-body">
+                                <form th:action="${contractDTO?.id ? '/contracts/' + contractDTO.id : '/contracts'}" 
+                                      method="post" 
+                                      id="contractForm"
+                                      th:object="${contractDTO}">
+                                    
+                                    <!-- Уведомления -->
+                                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+                                        <i class="fas fa-check-circle"></i> [[${success}]]
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                                        <i class="fas fa-exclamation-circle"></i> [[${error}]]
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    
+                                    <!-- Основная информация -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <h5><i class="fas fa-info-circle"></i> Основная информация</h5>
+                                            <hr>
+                                            
+                                            <!-- Номер договора -->
+                                            <div class="mb-3">
+                                                <label class="form-label">Номер договора</label>
+                                                <input type="text" 
+                                                       class="form-control" 
+                                                       th:value="${contractDTO?.contractNumber ?: 'Будет сгенерирован автоматически'}"
+                                                       readonly>
+                                            </div>
+                                            
+                                            <!-- Клиент -->
+                                            <div class="mb-3">
+                                                <label for="clientId" class="form-label required">
+                                                    <i class="fas fa-user"></i> Клиент
+                                                </label>
+                                                <select class="form-select" 
+                                                        id="clientId" 
+                                                        th:field="*{clientId}"
+                                                        required>
+                                                    <option value="">Выберите клиента...</option>
+                                                    <option th:each="client : ${clients}"
+                                                            th:value="${client.id}"
+                                                            th:text="${client.fullName} + ' (' + ${client.phone} + ')'"
+                                                            th:selected="${contractDTO?.clientId == client.id}">
+                                                    </option>
+                                                </select>
+                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('clientId')}">
+                                                    [[${#fields.errors('clientId')}]]
+                                                </div>
+                                                <div class="form-text">
+                                                    <a th:href="@{/clients/new}" target="_blank">
+                                                        <i class="fas fa-plus"></i> Добавить нового клиента
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Тип страхования -->
+                                            <div class="mb-3">
+                                                <label for="insuranceTypeCode" class="form-label required">
+                                                    <i class="fas fa-shield-alt"></i> Тип страхования
+                                                </label>
+                                                <select class="form-select" 
+                                                        id="insuranceTypeCode" 
+                                                        th:field="*{insuranceTypeCode}"
+                                                        required
+                                                        onchange="showSpecificFields(this.value)">
+                                                    <option value="">Выберите тип...</option>
+                                                    <option th:each="type : ${insuranceTypes}"
+                                                            th:value="${type.code}"
+                                                            th:text="${type.name}"
+                                                            th:selected="${contractDTO?.insuranceTypeCode == type.code}">
+                                                    </option>
+                                                </select>
+                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('insuranceTypeCode')}">
+                                                    [[${#fields.errors('insuranceTypeCode')}]]
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <h5><i class="fas fa-calendar-alt"></i> Срок действия</h5>
+                                            <hr>
+                                            
+                                            <!-- Даты -->
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label for="startDate" class="form-label required">
+                                                        Дата начала
+                                                    </label>
+                                                    <input type="date" 
+                                                           class="form-control" 
+                                                           id="startDate"
+                                                           th:field="*{startDate}"
+                                                           th:max="${nextYear}"
+                                                           required>
+                                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('startDate')}">
+                                                        [[${#fields.errors('startDate')}]]
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="endDate" class="form-label required">
+                                                        Дата окончания
+                                                    </label>
+                                                    <input type="date" 
+                                                           class="form-control" 
+                                                           id="endDate"
+                                                           th:field="*{endDate}"
+                                                           th:min="${today}"
+                                                           required>
+                                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('endDate')}">
+                                                        [[${#fields.errors('endDate')}]]
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Финансовая информация -->
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label for="premiumAmount" class="form-label required">
+                                                        Страховая премия
+                                                    </label>
+                                                    <div class="input-group">
+                                                        <input type="number" 
+                                                               class="form-control" 
+                                                               id="premiumAmount"
+                                                               th:field="*{premiumAmount}"
+                                                               step="0.01"
+                                                               min="0"
+                                                               required>
+                                                        <span class="input-group-text">₽</span>
+                                                    </div>
+                                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('premiumAmount')}">
+                                                        [[${#fields.errors('premiumAmount')}]]
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="insuredAmount" class="form-label required">
+                                                        Страховая сумма
+                                                    </label>
+                                                    <div class="input-group">
+                                                        <input type="number" 
+                                                               class="form-control" 
+                                                               id="insuredAmount"
+                                                               th:field="*{insuredAmount}"
+                                                               step="0.01"
+                                                               min="0"
+                                                               required>
+                                                        <span class="input-group-text">₽</span>
+                                                    </div>
+                                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('insuredAmount')}">
+                                                        [[${#fields.errors('insuredAmount')}]]
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Расчет периода -->
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-calculator"></i>
+                                                <strong>Расчет:</strong>
+                                                <span id="periodCalculation">Выберите даты для расчета</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Специфичные поля -->
+                                    <div id="specificFields">
+                                        <!-- Поля будут добавляться динамически -->
+                                    </div>
+                                    
+                                    <!-- Кнопки -->
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <a href="/contracts" class="btn btn-outline-secondary">
+                                            <i class="fas fa-arrow-left"></i> Назад к списку
+                                        </a>
+                                        <div>
+                                            <button type="button" class="btn btn-outline-primary me-2" 
+                                                    onclick="calculatePremium()">
+                                                <i class="fas fa-calculator"></i> Рассчитать
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> 
+                                                <span th:text="${contractDTO?.id ? 'Обновить' : 'Сохранить договор'}"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger ms-2" 
+                                                    th:if="${contractDTO?.id}"
+                                                    th:onclick="'confirmDelete(\'Вы уверены, что хотите удалить договор ' + ${contract.contractNumber} + '?\', \'/contracts/' + ${contract.id} + '/delete\')'">
+                                                <i class="fas fa-trash"></i> Удалить
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Предпросмотр договора -->
+                <div class="row mt-4" th:if="${contractDTO?.id}">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-file-pdf"></i> Предпросмотр договора
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <p>Для просмотра полного текста договора нажмите кнопку ниже</p>
+                                    <a th:href="@{/contracts/{id}/pdf(id=${contractDTO.id})}" 
+                                       class="btn btn-danger" target="_blank">
+                                        <i class="fas fa-file-pdf"></i> Скачать PDF
+                                    </a>
+                                    <button class="btn btn-outline-primary ms-2">
+                                        <i class="fas fa-print"></i> Печать договора
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="fragments/scripts :: scripts"></div>
+    
+    <!-- Шаблоны специфичных полей -->
+    <template id="cascoTemplate">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-car"></i> Данные для КАСКО
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="vehicleModel" class="form-label required">
+                            Модель транспортного средства
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="vehicleModel"
+                               name="vehicleModel"
+                               th:field="*{vehicleModel}"
+                               required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="manufactureYear" class="form-label required">
+                            Год выпуска
+                        </label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="manufactureYear"
+                               name="manufactureYear"
+                               th:field="*{manufactureYear}"
+                               min="1900"
+                               th:max="${T(java.time.LocalDate).now().year}"
+                               required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="vehicleCost" class="form-label required">
+                            Стоимость ТС
+                        </label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="vehicleCost"
+                                   name="vehicleCost"
+                                   th:field="*{vehicleCost}"
+                                   step="0.01"
+                                   min="0"
+                                   required>
+                            <span class="input-group-text">₽</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   id="hasFranchise"
+                                   name="hasFranchise"
+                                   th:field="*{hasFranchise}">
+                            <label class="form-check-label" for="hasFranchise">
+                                Применяется франшиза
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="franchiseAmount" class="form-label">
+                            Сумма франшизы
+                        </label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="franchiseAmount"
+                                   name="franchiseAmount"
+                                   th:field="*{franchiseAmount}"
+                                   step="0.01"
+                                   min="0"
+                                   th:disabled="${!contractDTO.hasFranchise}">
+                            <span class="input-group-text">₽</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <template id="osagoTemplate">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-car-side"></i> Данные для ОСАГО
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="vehicleModel" class="form-label required">
+                            Модель транспортного средства
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="vehicleModel"
+                               name="vehicleModel"
+                               th:field="*{vehicleModel}"
+                               required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="licensePlate" class="form-label">
+                            Государственный номер
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="licensePlate"
+                               name="licensePlate"
+                               th:field="*{licensePlate}">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="drivingExperience" class="form-label required">
+                            Стаж вождения (лет)
+                        </label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="drivingExperience"
+                               name="drivingExperience"
+                               th:field="*{drivingExperience}"
+                               min="0"
+                               required>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <template id="lifeTemplate">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-heartbeat"></i> Данные для страхования жизни
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="birthDate" class="form-label required">
+                            Дата рождения
+                        </label>
+                        <input type="date" 
+                               class="form-control" 
+                               id="birthDate"
+                               name="birthDate"
+                               th:field="*{birthDate}"
+                               required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="gender" class="form-label required">
+                            Пол
+                        </label>
+                        <select class="form-select" 
+                                id="gender" 
+                                name="gender"
+                                th:field="*{gender}"
+                                required>
+                            <option value="">Выберите пол...</option>
+                            <option value="M">Мужской</option>
+                            <option value="F">Женский</option>
+                            <option value="Мужской">Мужской</option>
+                            <option value="Женский">Женский</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="profession" class="form-label">
+                            Профессия
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="profession"
+                               name="profession"
+                               th:field="*{profession}">
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="healthStatus" class="form-label">
+                        Состояние здоровья
+                    </label>
+                    <textarea class="form-control" 
+                              id="healthStatus" 
+                              name="healthStatus"
+                              th:field="*{healthStatus}"
+                              rows="3"
+                              placeholder="Опишите состояние здоровья..."></textarea>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <template id="propertyTemplate">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-home"></i> Данные для страхования недвижимости
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="propertyType" class="form-label required">
+                            Тип недвижимости
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="propertyType"
+                               name="propertyType"
+                               th:field="*{propertyType}"
+                               required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="address" class="form-label required">
+                            Адрес
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="address"
+                               name="address"
+                               th:field="*{address}"
+                               required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="area" class="form-label required">
+                            Площадь (м²)
+                        </label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="area"
+                               name="area"
+                               th:field="*{area}"
+                               step="0.01"
+                               min="0"
+                               required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="constructionYear" class="form-label required">
+                            Год постройки
+                        </label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="constructionYear"
+                               name="constructionYear"
+                               th:field="*{constructionYear}"
+                               min="1800"
+                               th:max="${T(java.time.LocalDate).now().year}"
+                               required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="propertyCost" class="form-label required">
+                            Стоимость
+                        </label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="propertyCost"
+                                   name="propertyCost"
+                                   th:field="*{propertyCost}"
+                                   step="0.01"
+                                   min="0"
+                                   required>
+                            <span class="input-group-text">₽</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация специфичных полей
+            const insuranceTypeSelect = document.getElementById('insuranceTypeCode');
+            if (insuranceTypeSelect.value) {
+                showSpecificFields(insuranceTypeSelect.value);
+            }
+            
+            // Настройка франшизы
+            const franchiseCheckbox = document.getElementById('hasFranchise');
+            if (franchiseCheckbox) {
+                franchiseCheckbox.addEventListener('change', function() {
+                    const franchiseAmountInput = document.getElementById('franchiseAmount');
+                    franchiseAmountInput.disabled = !this.checked;
+                    if (!this.checked) {
+                        franchiseAmountInput.value = '0';
+                    }
+                });
+            }
+            
+            // Расчет периода
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            
+            startDateInput.addEventListener('change', calculatePeriod);
+            endDateInput.addEventListener('change', calculatePeriod);
+            
+            // Установка минимальных дат
+            if (!startDateInput.value) {
+                startDateInput.value = new Date().toISOString().split('T')[0];
+            }
+            if (!endDateInput.value) {
+                const nextYear = new Date();
+                nextYear.setFullYear(nextYear.getFullYear() + 1);
+                endDateInput.value = nextYear.toISOString().split('T')[0];
+            }
+            
+            calculatePeriod();
+            
+            // Валидация формы
+            const form = document.getElementById('contractForm');
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+        
+        function showSpecificFields(type) {
+            const container = document.getElementById('specificFields');
+            container.innerHTML = '';
+            
+            let templateId = '';
+            switch(type) {
+                case 'CASCO':
+                    templateId = 'cascoTemplate';
+                    break;
+                case 'OSAGO':
+                    templateId = 'osagoTemplate';
+                    break;
+                case 'LIFE':
+                    templateId = 'lifeTemplate';
+                    break;
+                case 'PROPERTY':
+                    templateId = 'propertyTemplate';
+                    break;
+                default:
+                    return;
+            }
+            
+            const template = document.getElementById(templateId);
+            if (template) {
+                const clone = template.content.cloneNode(true);
+                container.appendChild(clone);
+            }
+        }
+        
+        function calculatePeriod() {
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const calculationSpan = document.getElementById('periodCalculation');
+            
+            if (!startDateInput.value || !endDateInput.value) {
+                calculationSpan.textContent = 'Выберите даты для расчета';
+                return;
+            }
+            
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            
+            if (endDate <= startDate) {
+                calculationSpan.innerHTML = '<span class="text-danger">Дата окончания должна быть позже даты начала</span>';
+                return;
+            }
+            
+            const diffTime = Math.abs(endDate - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffMonths = Math.floor(diffDays / 30);
+            const diffYears = Math.floor(diffDays / 365);
+            
+            let periodText = `${diffDays} дней`;
+            if (diffYears > 0) {
+                periodText = `${diffYears} год${diffYears > 1 ? 'а' : ''} ${diffMonths % 12} мес.`;
+            } else if (diffMonths > 0) {
+                periodText = `${diffMonths} месяц${diffMonths > 1 ? 'ев' : ''}`;
+            }
+            
+            calculationSpan.textContent = `Период страхования: ${periodText}`;
+        }
+        
+        function calculatePremium() {
+            const insuredAmountInput = document.getElementById('insuredAmount');
+            const premiumAmountInput = document.getElementById('premiumAmount');
+            const insuranceTypeSelect = document.getElementById('insuranceTypeCode');
+            
+            if (!insuredAmountInput.value || !insuranceTypeSelect.value) {
+                alert('Заполните страховую сумму и выберите тип страхования');
+                return;
+            }
+            
+            const insuredAmount = parseFloat(insuredAmountInput.value);
+            let coefficient = 0.05; // Базовый коэффициент 5%
+            
+            // Коэффициенты в зависимости от типа страхования
+            switch(insuranceTypeSelect.value) {
+                case 'CASCO':
+                    coefficient = 0.03; // 3%
+                    break;
+                case 'OSAGO':
+                    coefficient = 0.01; // 1%
+                    break;
+                case 'LIFE':
+                    coefficient = 0.02; // 2%
+                    break;
+                case 'PROPERTY':
+                    coefficient = 0.015; // 1.5%
+                    break;
+            }
+            
+            const calculatedPremium = insuredAmount * coefficient;
+            premiumAmountInput.value = calculatedPremium.toFixed(2);
+            
+            showNotification('success', `Премия рассчитана: ${calculatedPremium.toFixed(2)} ₽`);
+        }
+    </script>
+</body>
+</html>

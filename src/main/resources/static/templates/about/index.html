@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head('Об авторе')"></head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-info-circle"></i> Об авторе проекта
+                        </h3>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- Фотография и основная информация -->
+                        <div class="text-center mb-4">
+                            <div class="author-avatar mb-3">
+                                <i class="fas fa-user-circle fa-6x text-primary"></i>
+                            </div>
+                            <h2 class="mb-1">[[${author}]]</h2>
+                            <p class="text-muted mb-3">
+                                <i class="fas fa-graduation-cap"></i> [[${institution}]]
+                                <br>
+                                <i class="fas fa-users"></i> Группа: [[${group}]]
+                            </p>
+                        </div>
+                        
+                        <!-- Контактная информация -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="contact-info">
+                                    <h5><i class="fas fa-envelope"></i> Контакты</h5>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="fas fa-envelope me-2"></i>
+                                            <a th:href="'mailto:' + ${email}" class="text-decoration-none">
+                                                [[${email}]]
+                                            </a>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-phone me-2"></i>
+                                            <a th:href="'tel:' + ${phone}" class="text-decoration-none">
+                                                [[${phone}]]
+                                            </a>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fab fa-github me-2"></i>
+                                            <a href="https://github.com/vladislav" class="text-decoration-none" target="_blank">
+                                                github.com/vladislav
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <i class="fab fa-linkedin me-2"></i>
+                                            <a href="https://linkedin.com/in/vladislav" class="text-decoration-none" target="_blank">
+                                                linkedin.com/in/vladislav
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="project-info">
+                                    <h5><i class="fas fa-project-diagram"></i> О проекте</h5>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="fas fa-calendar-alt me-2"></i>
+                                            Начало работы: 
+                                            <strong>[[${#dates.format(projectStart, 'dd.MM.yyyy')}]]</strong>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-calendar-check me-2"></i>
+                                            Завершение: 
+                                            <strong>[[${#dates.format(projectEnd, 'dd.MM.yyyy')}]]</strong>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-code me-2"></i>
+                                            Версия: <strong>1.0.0</strong>
+                                        </li>
+                                        <li>
+                                            <i class="fas fa-database me-2"></i>
+                                            База данных: <strong>PostgreSQL</strong>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Опыт работы с технологиями -->
+                        <div class="mb-4">
+                            <h5><i class="fas fa-tools"></i> Используемые технологии</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="technology-list">
+                                        <h6>Backend:</h6>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <span th:each="tech : ${technologies}" 
+                                                  class="badge bg-primary">
+                                                [[${tech}]]
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="technology-list">
+                                        <h6>Frontend:</h6>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <span class="badge bg-success">HTML5/CSS3</span>
+                                            <span class="badge bg-success">JavaScript</span>
+                                            <span class="badge bg-success">Bootstrap 5</span>
+                                            <span class="badge bg-success">Chart.js</span>
+                                            <span class="badge bg-success">Thymeleaf</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="technology-list">
+                                <h6>Базы данных и инструменты:</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge bg-info">PostgreSQL</span>
+                                    <span class="badge bg-info">Hibernate/JPA</span>
+                                    <span class="badge bg-info">Spring Security</span>
+                                    <span class="badge bg-info">Maven</span>
+                                    <span class="badge bg-info">Git</span>
+                                    <span class="badge bg-info">Docker</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Описание проекта -->
+                        <div class="mb-4">
+                            <h5><i class="fas fa-file-alt"></i> Описание проекта</h5>
+                            <div class="project-description">
+                                <p>
+                                    <strong>InsurancePro</strong> - это полнофункциональная информационная система 
+                                    для автоматизации деятельности страховой компании. Система разработана 
+                                    как дипломный проект и демонстрирует навыки работы с современными 
+                                    технологиями разработки веб-приложений.
+                                </p>
+                                
+                                <h6>Основные возможности системы:</h6>
+                                <ul>
+                                    <li>Управление клиентской базой (CRUD операции)</li>
+                                    <li>Оформление договоров страхования различных типов</li>
+                                    <li>Учет платежей и страховых случаев</li>
+                                    <li>Разграничение прав доступа по ролям пользователей</li>
+                                    <li>Расширенная статистика и аналитика</li>
+                                    <li>Генерация отчетов и экспорт данных</li>
+                                    <li>Адаптивный интерфейс для работы на любых устройствах</li>
+                                </ul>
+                                
+                                <h6>Архитектура проекта:</h6>
+                                <p>
+                                    Проект построен по трехзвенной архитектуре (MVC) с использованием 
+                                    современных паттернов проектирования. Серверная часть реализована 
+                                    на Spring Boot, что обеспечивает высокую производительность и 
+                                    масштабируемость. Клиентская часть использует современные стандарты 
+                                    HTML5 и CSS3 с адаптивным дизайном.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Ключевые особенности -->
+                        <div class="mb-4">
+                            <h5><i class="fas fa-star"></i> Ключевые особенности реализации</h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="feature-card text-center p-3">
+                                        <i class="fas fa-shield-alt fa-2x text-primary mb-3"></i>
+                                        <h6>Безопасность</h6>
+                                        <p class="small mb-0">
+                                            Реализована полная аутентификация и авторизация с использованием Spring Security
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="feature-card text-center p-3">
+                                        <i class="fas fa-database fa-2x text-success mb-3"></i>
+                                        <h6>Производительность</h6>
+                                        <p class="small mb-0">
+                                            Оптимизированные запросы к БД, пагинация, кэширование
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="feature-card text-center p-3">
+                                        <i class="fas fa-mobile-alt fa-2x text-warning mb-3"></i>
+                                        <h6>Адаптивность</h6>
+                                        <p class="small mb-0">
+                                            Полностью адаптивный дизайн, работающий на всех устройствах
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Лицензия и копирайт -->
+                        <div class="text-center mt-4">
+                            <hr>
+                            <p class="text-muted mb-0">
+                                © 2024 InsurancePro. Все права защищены.<br>
+                                Данный проект является учебным и создан в образовательных целях.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="fragments/scripts :: scripts"></div>
+    
+    <style>
+        .author-avatar {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            color: white;
+        }
+        
+        .contact-info, .project-info {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            height: 100%;
+        }
+        
+        .contact-info h5, .project-info h5 {
+            color: #2c3e50;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .contact-info li, .project-info li {
+            padding: 5px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .contact-info li:last-child, .project-info li:last-child {
+            border-bottom: none;
+        }
+        
+        .technology-list {
+            margin-bottom: 20px;
+        }
+        
+        .technology-list h6 {
+            color: #6c757d;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .project-description {
+            line-height: 1.6;
+        }
+        
+        .project-description h6 {
+            color: var(--secondary-color);
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .feature-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .feature-card h6 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+    </style>
+</body>
+</html>
