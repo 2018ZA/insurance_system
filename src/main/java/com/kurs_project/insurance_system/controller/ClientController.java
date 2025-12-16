@@ -4,7 +4,7 @@ import com.kurs_project.insurance_system.dto.ClientDTO;
 import com.kurs_project.insurance_system.entity.Client;
 import com.kurs_project.insurance_system.service.ClientService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import .RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

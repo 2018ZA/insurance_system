@@ -1,7 +1,7 @@
 package com.kurs_project.insurance_system.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import .Data;
 
 @Data
 public class AuthRequest {

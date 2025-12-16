@@ -1,7 +1,7 @@
 package com.kurs_project.insurance_system.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import .Data;
 
 @Entity
 @Table(name = "insurance_type")

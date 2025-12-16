@@ -3,7 +3,7 @@ package com.kurs_project.insurance_system.service;
 import com.kurs_project.insurance_system.entity.User;
 import com.kurs_project.insurance_system.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
+import .RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

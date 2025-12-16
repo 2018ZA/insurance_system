@@ -1,72 +1,112 @@
 package com.kurs_project.insurance_system.entity;
-import lombok.Data;
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.*;
+import java.util.Collection;
+import java.util.Set;
+
 @Entity
-@Table(name = "users")
-@Data
+@Table(name = "usr")
 public class User implements UserDetails {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable = false, length = 100)
-    private String login;
-    
-    @Column(nullable = false, length = 255)
+    private String username;
     private String password;
+    private boolean active;
     
-    @ManyToOne
-    @JoinColumn(name = "role_code", referencedColumnName = "code")
-    private UserRole role;
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
     
-    @Column(name = "full_name", nullable = false, length = 200)
-    private String fullName;
+    // Конструкторы
+    public User() {}
     
-    private Boolean active = true;
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
     
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
-
+    // Геттеры и сеттеры
+    public Long getId() { 
+        return id; 
+    }
+    
+    public void setId(Long id) { 
+        this.id = id; 
+    }
+    
+    public String getUsername() { 
+        return username; 
+    }
+    
+    public void setUsername(String username) { 
+        this.username = username; 
+    }
+    
+    public String getPassword() { 
+        return password; 
+    }
+    
+    public void setPassword(String password) { 
+        this.password = password; 
+    }
+    
+    public boolean isActive() { 
+        return active; 
+    }
+    
+    public void setActive(boolean active) { 
+        this.active = active; 
+    }
+    
+    public Set<Role> getRoles() { 
+        return roles; 
+    }
+    
+    public void setRoles(Set<Role> roles) { 
+        this.roles = roles; 
+    }
+    
+    // UserDetails методы
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+        return getRoles();
     }
-
+    
     @Override
-    public String getUsername() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
+    public boolean isAccountNonExpired() { 
+        return true; 
     }
-
+    
     @Override
-    public boolean isAccountNonExpired() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonExpired'");
+    public boolean isAccountNonLocked() { 
+        return true; 
     }
-
+    
     @Override
-    public boolean isAccountNonLocked() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonLocked'");
+    public boolean isCredentialsNonExpired() { 
+        return true; 
     }
-
+    
     @Override
-    public boolean isCredentialsNonExpired() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isCredentialsNonExpired'");
+    public boolean isEnabled() { 
+        return isActive(); 
     }
-
+    
+    // toString для отладки
     @Override
-    public boolean isEnabled() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", active=" + active +
+                ", roles=" + roles +
+                '}';
     }
 }
-

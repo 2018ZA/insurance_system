@@ -4,7 +4,7 @@ import com.kurs_project.insurance_system.repository.ClientRepository;
 import com.kurs_project.insurance_system.repository.ContractRepository;
 import com.kurs_project.insurance_system.repository.PaymentRepository;
 import com.kurs_project.insurance_system.repository.StatisticRepository;
-import lombok.RequiredArgsConstructor;
+import .RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

@@ -1,6 +1,6 @@
 package com.kurs_project.insurance_system.dto;
 
-import lombok.Data;
+import .Data;
 import java.math.BigDecimal;
 import java.util.Map;
 

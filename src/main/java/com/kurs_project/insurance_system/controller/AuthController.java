@@ -6,7 +6,7 @@ import com.kurs_project.insurance_system.entity.User;
 import com.kurs_project.insurance_system.service.UserService;
 import com.kurs_project.insurance_system.util.SecurityUtils;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

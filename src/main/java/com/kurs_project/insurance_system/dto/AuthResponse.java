@@ -1,6 +1,6 @@
 package com.kurs_project.insurance_system.dto;
 
-import lombok.Data;
+import .Data;
 
 @Data
 public class AuthResponse {

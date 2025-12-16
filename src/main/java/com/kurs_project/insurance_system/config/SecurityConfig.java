@@ -1,7 +1,7 @@
 package com.kurs_project.insurance_system.config;
 
 import com.kurs_project.insurance_system.service.UserService;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

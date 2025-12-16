@@ -4,7 +4,7 @@ import com.kurs_project.insurance_system.dto.ContractDTO;
 import com.kurs_project.insurance_system.entity.*;
 import com.kurs_project.insurance_system.repository.*;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import .RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

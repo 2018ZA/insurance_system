@@ -5,7 +5,7 @@ import com.kurs_project.insurance_system.entity.UserRole;
 import com.kurs_project.insurance_system.repository.UserRepository;
 import com.kurs_project.insurance_system.repository.UserRoleRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import .RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

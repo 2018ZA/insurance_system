@@ -1,7 +1,6 @@
 package com.kurs_project.insurance_system.util;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 
 
 public class PasswordEncoder {

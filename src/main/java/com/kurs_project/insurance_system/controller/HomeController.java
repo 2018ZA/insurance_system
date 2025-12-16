@@ -4,7 +4,7 @@ import com.kurs_project.insurance_system.service.ClientService;
 import com.kurs_project.insurance_system.service.ContractService;
 import com.kurs_project.insurance_system.service.StatisticService;
 import com.kurs_project.insurance_system.util.SecurityUtils;
-import lombok.RequiredArgsConstructor;
+import .RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

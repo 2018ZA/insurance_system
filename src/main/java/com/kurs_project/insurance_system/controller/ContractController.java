@@ -8,7 +8,7 @@ import com.kurs_project.insurance_system.service.ClientService;
 import com.kurs_project.insurance_system.service.ContractService;
 import com.kurs_project.insurance_system.repository.InsuranceTypeRepository;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import .RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
