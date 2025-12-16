@@ -102,9 +102,9 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <button type="button" 
-                                            class="btn btn-sm btn-danger" 
-                                            title="Удалить"
-                                            onclick="confirmDelete([[${client.id}]], '[[${client.fullName}]]')">
+                                        class="btn btn-sm btn-danger" 
+                                        title="Удалить"
+                                        th:onclick="'confirmDelete(' + ${client.id} + ', \'' + ${#strings.replace(#strings.escapeJava(client.fullName), '''', '\\''')} + '\')'">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>

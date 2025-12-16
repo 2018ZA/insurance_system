@@ -285,7 +285,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Построение круговой диаграммы
-            const contracts = [[$,{client.contracts}]];
+            const contracts = /*[[${client.contracts}]]*/ [];
             const typeCounts = {};
             
             contracts.forEach(contract => {

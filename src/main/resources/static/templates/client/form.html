@@ -208,7 +208,7 @@
             });
             
             // Загрузка договоров клиента
-            const clientId = [[${clientDTO?.id}]];
+            const clientId = /*[[${clientDTO?.id}]]*/ null;
             if (clientId) {
                 fetch('/api/clients/' + clientId + '/contracts')
                     .then(response => response.json())

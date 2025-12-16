@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface insuranceTypeRepository extends JpaRepository<InsuranceType, String> {
+public interface InsuranceTypeRepository extends JpaRepository<InsuranceType, String> {
 }
