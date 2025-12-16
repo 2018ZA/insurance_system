@@ -1,72 +1,56 @@
 package com.kurs_project.insurance_system.entity;
 
-import jakarta.persistence.*;
-import .Data;
-import java.math.BigDecimal;
+import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "contract")
-@Data
 public class Contract {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "contract_number", unique = true, nullable = false, length = 100)
     private String contractNumber;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private Double amount;
     
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
     
     @ManyToOne
-    @JoinColumn(name = "insurance_type_code", referencedColumnName = "code")
+    @JoinColumn(name = "insurance_type_id")
     private InsuranceType insuranceType;
     
     @ManyToOne
-    @JoinColumn(name = "agent_id")
-    private User agent;
+    @JoinColumn(name = "contract_status_id")
+    private ContractStatus contractStatus;
     
-    @ManyToOne
-    @JoinColumn(name = "status_code", referencedColumnName = "code")
-    private ContractStatus status;
+    public Contract() {}
     
-    @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     
-    @Column(name = "end_date", nullable = false)
-    private LocalDate endDate;
+    public String getContractNumber() { return contractNumber; }
+    public void setContractNumber(String contractNumber) { this.contractNumber = contractNumber; }
     
-    @Column(name = "premium_amount", nullable = false, precision = 15, scale = 2)
-    private BigDecimal premiumAmount;
+    public LocalDate getStartDate() { return startDate; }
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
     
-    @Column(name = "insured_amount", nullable = false, precision = 15, scale = 2)
-    private BigDecimal insuredAmount;
+    public LocalDate getEndDate() { return endDate; }
+    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
     
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    public Double getAmount() { return amount; }
+    public void setAmount(Double amount) { this.amount = amount; }
     
-    @OneToOne(mappedBy = "contract", cascade = CascadeType.ALL)
-    private OsagoData osagoData;
+    public Client getClient() { return client; }
+    public void setClient(Client client) { this.client = client; }
     
-    @OneToOne(mappedBy = "contract", cascade = CascadeType.ALL)
-    private CascoData cascoData;
+    public InsuranceType getInsuranceType() { return insuranceType; }
+    public void setInsuranceType(InsuranceType insuranceType) { this.insuranceType = insuranceType; }
     
-    @OneToOne(mappedBy = "contract", cascade = CascadeType.ALL)
-    private LifeInsuranceData lifeInsuranceData;
-    
-    @OneToOne(mappedBy = "contract", cascade = CascadeType.ALL)
-    private PropertyInsuranceData propertyInsuranceData;
-    
-    @PrePersist
-    public void prePersist() {
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
-        }
-        if (contractNumber == null) {
-            contractNumber = "CTR-" + System.currentTimeMillis();
-        }
-    }
+    public ContractStatus getContractStatus() { return contractStatus; }
+    public void setContractStatus(ContractStatus contractStatus) { this.contractStatus = contractStatus; }
 }

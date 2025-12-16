@@ -1,35 +1,45 @@
 package com.kurs_project.insurance_system.entity;
 
-import jakarta.persistence.*;
-import .Data;
-import java.math.BigDecimal;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "payment")
-@Data
 public class Payment {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    private String paymentNumber;
+    private LocalDate paymentDate;
+    private Double amount;
     
     @ManyToOne
     @JoinColumn(name = "contract_id")
     private Contract contract;
     
-    @Column(nullable = false, precision = 15, scale = 2)
-    private BigDecimal amount;
-    
-    @Column(name = "payment_date")
-    private LocalDate paymentDate = LocalDate.now();
-    
     @ManyToOne
-    @JoinColumn(name = "status_code", referencedColumnName = "code")
-    private PaymentStatus status;
+    @JoinColumn(name = "payment_status_id")
+    private PaymentStatus paymentStatus;
     
-    @Column(name = "payment_method", length = 50)
-    private String paymentMethod;
+    public Payment() {}
     
-    @Column(name = "transaction_number", length = 100)
-    private String transactionNumber;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getPaymentNumber() { return paymentNumber; }
+    public void setPaymentNumber(String paymentNumber) { this.paymentNumber = paymentNumber; }
+    
+    public LocalDate getPaymentDate() { return paymentDate; }
+    public void setPaymentDate(LocalDate paymentDate) { this.paymentDate = paymentDate; }
+    
+    public Double getAmount() { return amount; }
+    public void setAmount(Double amount) { this.amount = amount; }
+    
+    public Contract getContract() { return contract; }
+    public void setContract(Contract contract) { this.contract = contract; }
+    
+    public PaymentStatus getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(PaymentStatus paymentStatus) { this.paymentStatus = paymentStatus; }
 }

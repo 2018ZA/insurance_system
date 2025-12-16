@@ -1,27 +1,26 @@
 package com.kurs_project.insurance_system.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import .Data;
-
-@Data
 public class ClientDTO {
     private Long id;
-    
-    @NotBlank(message = "ФИО обязательно")
-    private String fullName;
-    
-    @Pattern(regexp = "\\d{4}", message = "Серия паспорта должна содержать 4 цифры")
-    private String passportSeries;
-    
-    @Pattern(regexp = "\\d{6}", message = "Номер паспорта должен содержать 6 цифр")
-    private String passportNumber;
-    
-    @NotBlank(message = "Телефон обязателен")
-    @Pattern(regexp = "^\\+7\\d{10}$", message = "Телефон должен быть в формате +7XXXXXXXXXX")
+    private String firstName;
+    private String lastName;
+    private String email;
     private String phone;
     
-    @Email(message = "Некорректный email")
-    private String email;
+    public ClientDTO() {}
+    
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+    
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 }

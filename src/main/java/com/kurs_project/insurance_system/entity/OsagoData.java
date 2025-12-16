@@ -1,29 +1,41 @@
 package com.kurs_project.insurance_system.entity;
 
-import jakarta.persistence.*;
-import .Data;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "osago_data")
-@Data
 public class OsagoData {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne
-    @JoinColumn(name = "contract_id", unique = true)
-    private Contract contract;
-    
-    @Column(name = "license_plate", length = 20)
+    private String driverLicense;
+    private Integer drivingExperience;
+    private String carModel;
     private String licensePlate;
     
-    @Column(name = "vehicle_model", nullable = false, length = 100)
-    private String vehicleModel;
+    @OneToOne
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
     
-    @Column(length = 50)
-    private String vin;
+    public OsagoData() {}
     
-    @Column(name = "driving_experience")
-    private Integer drivingExperience;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getDriverLicense() { return driverLicense; }
+    public void setDriverLicense(String driverLicense) { this.driverLicense = driverLicense; }
+    
+    public Integer getDrivingExperience() { return drivingExperience; }
+    public void setDrivingExperience(Integer drivingExperience) { this.drivingExperience = drivingExperience; }
+    
+    public String getCarModel() { return carModel; }
+    public void setCarModel(String carModel) { this.carModel = carModel; }
+    
+    public String getLicensePlate() { return licensePlate; }
+    public void setLicensePlate(String licensePlate) { this.licensePlate = licensePlate; }
+    
+    public Contract getContract() { return contract; }
+    public void setContract(Contract contract) { this.contract = contract; }
 }

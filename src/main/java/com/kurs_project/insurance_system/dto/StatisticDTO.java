@@ -1,29 +1,22 @@
 package com.kurs_project.insurance_system.dto;
 
-import .Data;
-import java.math.BigDecimal;
-import java.util.Map;
-
-@Data
 public class StatisticDTO {
-    private Long totalClients;
-    private Long totalContracts;
-    private BigDecimal totalPremiums;
-    private BigDecimal monthlyPayments;
-    private Map<String, Long> contractsByType;
-    private Map<String, Double> averagePremiums;
-    private Map<String, Long> contractsByStatus;
+    private Integer totalContracts;
+    private Integer activeContracts;
+    private Double totalRevenue;
+    private Integer totalClaims;
     
-    @Data
-    public static class MonthlyStat {
-        private Integer month;
-        private Integer year;
-        private Long count;
-    }
+    public StatisticDTO() {}
     
-    @Data
-    public static class PremiumTrend {
-        private String month;
-        private BigDecimal totalPremium;
-    }
+    public Integer getTotalContracts() { return totalContracts; }
+    public void setTotalContracts(Integer totalContracts) { this.totalContracts = totalContracts; }
+    
+    public Integer getActiveContracts() { return activeContracts; }
+    public void setActiveContracts(Integer activeContracts) { this.activeContracts = activeContracts; }
+    
+    public Double getTotalRevenue() { return totalRevenue; }
+    public void setTotalRevenue(Double totalRevenue) { this.totalRevenue = totalRevenue; }
+    
+    public Integer getTotalClaims() { return totalClaims; }
+    public void setTotalClaims(Integer totalClaims) { this.totalClaims = totalClaims; }
 }

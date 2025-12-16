@@ -1,30 +1,37 @@
 package com.kurs_project.insurance_system.entity;
 
-import jakarta.persistence.*;
-import .Data;
-import java.time.LocalDate;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "life_insurance_data")
-@Data
 public class LifeInsuranceData {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    private Integer age;
+    private String healthStatus;
+    private String occupation;
+    
     @OneToOne
-    @JoinColumn(name = "contract_id", unique = true)
+    @JoinColumn(name = "contract_id")
     private Contract contract;
     
-    @Column(name = "birth_date", nullable = false)
-    private LocalDate birthDate;
+    public LifeInsuranceData() {}
     
-    @Column(length = 10)
-    private String gender;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     
-    @Column(length = 100)
-    private String profession;
+    public Integer getAge() { return age; }
+    public void setAge(Integer age) { this.age = age; }
     
-    @Column(name = "health_status", length = 200)
-    private String healthStatus;
+    public String getHealthStatus() { return healthStatus; }
+    public void setHealthStatus(String healthStatus) { this.healthStatus = healthStatus; }
+    
+    public String getOccupation() { return occupation; }
+    public void setOccupation(String occupation) { this.occupation = occupation; }
+    
+    public Contract getContract() { return contract; }
+    public void setContract(Contract contract) { this.contract = contract; }
 }
